@@ -96,14 +96,14 @@ void Client::SendStream(const char* peer_ip, string data){
 
 	peer_addr.sin_port = htons(UDP_PORT_NUM);
 
-    if( sendto(getUDPDescriptor(), buffer, 1023, 0, (struct sockaddr*)&peer_addr, sizeof(peer_addr)) )
+    if( sendto(getUDPDescriptor(), buffer, 1023, 0, (struct sockaddr*)&peer_addr, sizeof(peer_addr)) < 0 )
     	perror("SEND STREAM FAILED");
 
 }
 
 string Client::ReadStream(){
 	char buffer[1024];
-    if( recvfrom(getUDPDescriptor(), buffer, 1023, 0, NULL, NULL) )
+    if( recvfrom(getUDPDescriptor(), buffer, 1023, 0, NULL, NULL) < 0)
     	perror("READ STREAM FAILED");
     string data(buffer);
 	return data;
