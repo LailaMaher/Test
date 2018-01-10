@@ -64,6 +64,14 @@ void User::connectToPeer(User* peer){
 		writeToClient(s);
 		peer->writeToClient(getIP());
 
+		cout << "waiting for confirmation from client\n";
+		cout << readFromClient() << endl;
+
+		cout << "infrom peer\n";
+		peer->writeToClient("hello sent");
+
+		cout << "waiting for confirmation from peer\n";
+		cout << peer->readFromClient() << endl;
 	}
 	else writeToClient("busy");
 

@@ -3,24 +3,45 @@
 
 #include "Client.h"
 
-void* handleIncomingRequests(void* client_v){
+bool SENDER = false;
+
+
+void* readFromUDPStream(void* client_v){
+	Client* client = (Client*)client_v;
+	string data = client->ReadStream();
+	cout << data << endl;
+}
+
+
+void* HandleNewConnection(void* client_v){
 	Client* client = (Client*)client_v;
 
 	string ip = client->ReadFromServer();
 	cout << "Incoming IP :: " << ip << endl;
-
 	const char *cip = ip.c_str();
 
-	// send and receive hello
-	cout << "sending and receiving hello\n";
-	client->SendStream(cip, "hello");
-	string data = client->ReadStream(); // hello
-	
-	cout << "waiting for msg\n";
+	if(SENDER){
+		// send UDP hello msg
+		cout << "I am sender \nsending hello\n";
+		client->SendStream(cip, "hello");
+		cout << "inform server about sending hello\n";
+		client->WriteToServer("hello sent");
+		cout << "sending UDP packet stream\n";
+		client->SendStream(cip, "this is a packet stream");
 
-	client->SendStream(cip,"this is a msg");
-	data = client->ReadStream(); // this is a msg
-	cout << data << endl;
+
+	} else{
+
+		// wait for UDP hello msg
+		cout << "I am receiver \nwaiting for hello from server\n";
+		string hello_sent = client->ReadFromServer();
+		cout << "sending hello to peer\n";
+		client->SendStream(cip, "hello");
+		cout << "inform server about sending hello\n";
+		client->WriteToServer("hello sent");
+
+	}
+	return NULL;
 }
 
 void* StartConnection(void* client_v){
@@ -29,27 +50,16 @@ void* StartConnection(void* client_v){
 	int ID;	
 	cout << "Enter the ID to connect to: " << endl;
 	cin >> ID;
+
+	SENDER = true;
+
 	client->WriteToServer(to_string(ID));
-
-	//string ip = client->ReadFromServer(); 
-	//cout << "Your peer IP :: " << ip << endl;
-
-	//const char *cip = ip.c_str();
-	// send and receive hello
-
-	//cout << "sending and receiving hello\n";
-	//client->SendStream(cip,"hello");
-	//string data = client->ReadStream(); // hello
-
-	//cout << "send data packet\n";
-	//client->SendStream(cip,"this is a msg");	
-
 }
 
 int main(int argc, char const *argv[])
 {
 
-	pthread_t pid1, pid2;
+	pthread_t pid1, pid2, pid3;
 	Client C;
 
 	C.CreateUDPSocket(atoi(argv[2]));
@@ -62,8 +72,10 @@ int main(int argc, char const *argv[])
 
 	int err;
 	
-	err = pthread_create(&pid1, NULL, &handleIncomingRequests, &C);
+	err = pthread_create(&pid1, NULL, &HandleNewConnection, &C);
 	err = pthread_create(&pid2, NULL, &StartConnection, &C);
+	err = pthread_create(&pid3, NULL, &readFromUDPStream, &C);
+
 
 	pthread_join(pid1, NULL);
 	pthread_join(pid2, NULL);

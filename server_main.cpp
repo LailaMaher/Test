@@ -4,7 +4,6 @@
 #include "Server.h"
 #include <pthread.h>
 
-
 void* Work(void* user_v){
 
 	cout << "work \n";
