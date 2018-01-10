@@ -50,7 +50,7 @@ void* HandleNewConnection(void* client_v){
 				cout << "HandleNewConnection Case[4]" << endl;
 				client->SendStream("hello");
 				client->WriteToServer("3" + client->getPeerIP());
-
+				break;
 			default:
 				cout << "invalid token" << endl;
 				break;
