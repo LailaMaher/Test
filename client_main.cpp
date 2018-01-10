@@ -12,9 +12,11 @@ void* handleIncomingRequests(void* client_v){
 	const char *cip = ip.c_str();
 
 	// send and receive hello
-	client->SendStream(cip,"hello");
+	cout << "sending and receiving hello\n";
+	client->SendStream(cip, "hello");
 	string data = client->ReadStream(); // hello
-	cout << data << endl;
+	
+	cout << "waiting for msg\n";
 
 	data = client->ReadStream(); // this is a msg
 	cout << data << endl;
@@ -33,9 +35,12 @@ void* StartConnection(void* client_v){
 
 	const char *cip = ip.c_str();
 	// send and receive hello
+
+	cout << "sending and receiving hello\n";
 	client->SendStream(cip,"hello");
 	string data = client->ReadStream(); // hello
 
+	cout << "send data packet\n";
 	client->SendStream(cip,"this is a msg");	
 
 }

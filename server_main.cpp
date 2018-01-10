@@ -30,7 +30,7 @@ int main(int argc, char const *argv[])
 
 	while(true){
 
-		cout << " Accepting user\n";
+		cout << "Accepting user\n";
 
 		User* new_user = tcp->acceptUser();
 

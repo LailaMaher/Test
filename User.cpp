@@ -58,8 +58,8 @@ void User::connectToPeer(User* peer){
 		setBusy(true);
 		peer->setBusy(true);
 
-		cout << "My IP" << getIP() << endl;
-		cout << "Peer IP " << s;
+		cout << "My IP " << getIP() << endl;
+		cout << "Peer IP " << s << endl;
 
 		writeToClient(s);
 		peer->writeToClient(getIP());
