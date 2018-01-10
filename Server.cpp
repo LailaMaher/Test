@@ -75,6 +75,8 @@ void Server::addUser(User* new_user){
 
 	current_users++;
 	pthread_mutex_unlock(&users_mutex);
+
+	cout << "server sends 1\n";
 	new_user->writeToClient("1");
 
 }
