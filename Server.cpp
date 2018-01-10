@@ -50,6 +50,9 @@ User* Server::acceptUser(){
 
 	string IP(inet_ntoa(user_address.sin_addr));
 
+	cout << "server desc = " << descriptor << endl;
+	cout << "client desc = " << user_fd << endl;
+
 	cout << "New User IP = " << IP << endl;
 
 	return createUser(user_fd, IP);
@@ -75,6 +78,8 @@ void Server::addUser(User* new_user){
 
 	current_users++;
 	pthread_mutex_unlock(&users_mutex);
+
+	cout << "tcp desc = " << new_user->getTCPDescriptor();
 
 	cout << "server sends 1\n";
 	new_user->writeToClient("1");
