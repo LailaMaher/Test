@@ -42,11 +42,9 @@ User* Server::acceptUser(){
 	struct sockaddr_in user_address;
 	int len = sizeof(user_address);
 
-	int user_fd;
-
-
-	if( user_fd = accept(descriptor, (struct sockaddr *)&user_address, (socklen_t*)&len) < 0 )
-		perror("ACCEPT ERROR");
+	int user_fd = accept(descriptor, (struct sockaddr *)&user_address, (socklen_t*)&len);
+	if (user_fd < 0) 
+	  perror("ACCEPT ERROR");
 
 	string IP(inet_ntoa(user_address.sin_addr));
 
@@ -79,10 +77,10 @@ void Server::addUser(User* new_user){
 	current_users++;
 	pthread_mutex_unlock(&users_mutex);
 
-	cout << "tcp desc = " << new_user->getTCPDescriptor();
+	cout << "tcp desc = " << new_user->getTCPDescriptor() << endl;
 
-	cout << "server sends 1\n";
-	new_user->writeToClient("1");
+	cout << "server sends ID\n";
+	new_user->writeToClient(to_string(new_user->getID()));
 
 }
 
@@ -113,9 +111,13 @@ User* Server::isExist(int ID){
 void Server::startConnection(User* user){
 	string peer_ID = user->readFromClient();
 
+	cout << "peer ID = " << peer_ID << endl;
+
 	User* peer = isExist(stoi(peer_ID));
 
 	if(peer != NULL){
+		cout << "peer not null\n";
 		user->connectToPeer(peer);
 	}
 }
+

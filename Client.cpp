@@ -21,6 +21,8 @@ void Client::CreateTCPSocket(const char* hostname, int p){
 
     if( connect(getTCPDescriptor(), (struct sockaddr *) &server_address, sizeof(server_address)) < 0 ) 
     	perror("CONNECT TO SERVER FAILED");
+
+    cout << "connected" << endl;
 }
 
 void Client::setTCPDescriptor(int tcp_descriptor){
@@ -34,7 +36,11 @@ int Client::getTCPDescriptor() const{
 
 string Client::ReadFromServer(){
 	char buffer[1024];
-	if( read(getTCPDescriptor(), buffer, 1023) < 0 ) perror("READ FAILED");
+	int read_error = read(getTCPDescriptor(), buffer, 1023);
+	if (read_error < 0)
+		perror("READ FAILED");
+	cout << "Read Error: " << read_error << endl;
+	cout << "Errno: " << errno << endl;
 	string data(buffer);
 	return data;
 }

@@ -50,20 +50,30 @@ int User::getTCPDescriptor() const{
 void User::connectToPeer(User* peer){
 	string s;
 	if(!peer->isBusy()) {
+		cout << "peer is free\n";
 		s = peer->getIP();
 		setBusy(true);
 		peer->setBusy(true);
 	}
 	else s = "busy";
+	cout << "send to client " << s << endl;
 	writeToClient(s);
 }
 
 void User::writeToClient(string data){
     char buffer[1024];
     strcpy(buffer, data.c_str());
-    cout << "set ip " << tcp_descriptor << endl;
-    if( write(tcp_descriptor, buffer, 1023) < 0) perror("WRITING FAILED");
+    cout << "User socket " << tcp_descriptor << endl;
+	cout << "Buffer to be sent: " << buffer << " " << " -- Length: " << strlen(buffer) << endl;
+    int x = write(tcp_descriptor, buffer, 1023); 
+		if (x < 0)
+			perror("WRITING FAILED");
+
+    cout << "write error = " << x << endl;
+    cout << errno << endl;
 }
+
+
 
 string User::readFromClient(){
 	char buffer[1024];
