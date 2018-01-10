@@ -48,16 +48,25 @@ int User::getTCPDescriptor() const{
 }
 
 void User::connectToPeer(User* peer){
+
+	cout << "Connecting peers\n";
 	string s;
 	if(!peer->isBusy()) {
 		cout << "peer is free\n";
+
 		s = peer->getIP();
 		setBusy(true);
 		peer->setBusy(true);
+
+		cout << "My IP" << getIP() << endl;
+		cout << "Peer IP " << s;
+
+		writeToClient(s);
+		peer->writeToClient(getIP());
+
 	}
-	else s = "busy";
-	cout << "send to client " << s << endl;
-	writeToClient(s);
+	else writeToClient("busy");
+
 }
 
 void User::writeToClient(string data){
