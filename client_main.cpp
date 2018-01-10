@@ -18,6 +18,7 @@ void* handleIncomingRequests(void* client_v){
 	
 	cout << "waiting for msg\n";
 
+	client->SendStream(cip,"this is a msg");
 	data = client->ReadStream(); // this is a msg
 	cout << data << endl;
 }
@@ -30,18 +31,18 @@ void* StartConnection(void* client_v){
 	cin >> ID;
 	client->WriteToServer(to_string(ID));
 
-	string ip = client->ReadFromServer(); 
-	cout << "Your peer IP :: " << ip << endl;
+	//string ip = client->ReadFromServer(); 
+	//cout << "Your peer IP :: " << ip << endl;
 
-	const char *cip = ip.c_str();
+	//const char *cip = ip.c_str();
 	// send and receive hello
 
-	cout << "sending and receiving hello\n";
-	client->SendStream(cip,"hello");
-	string data = client->ReadStream(); // hello
+	//cout << "sending and receiving hello\n";
+	//client->SendStream(cip,"hello");
+	//string data = client->ReadStream(); // hello
 
-	cout << "send data packet\n";
-	client->SendStream(cip,"this is a msg");	
+	//cout << "send data packet\n";
+	//client->SendStream(cip,"this is a msg");	
 
 }
 
