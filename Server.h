@@ -22,6 +22,7 @@ class Server{
 	User* createUser(int, string);
 
 	User* isExist(int);
+	User* getByIP(string);
 
 	Server();
 

@@ -80,7 +80,8 @@ int Client::getUDPDescriptor() const{
 	return udp_descriptor;
 }
 
-void Client::SendStream(const char* peer_ip, string data){
+void Client::SendStream(string data){
+
 
     char buffer[1024];
     strcpy(buffer, data.c_str());
@@ -89,7 +90,8 @@ void Client::SendStream(const char* peer_ip, string data){
 
     peer_addr.sin_family = AF_INET;
 	
-	struct hostent* peer = gethostbyname(peer_ip);
+	const char *cip = peer_ip.c_str();
+	struct hostent* peer = gethostbyname(cip);
     bcopy((char *)peer->h_addr, 
          (char *)&peer_addr.sin_addr.s_addr,
          peer->h_length);
@@ -107,4 +109,12 @@ string Client::ReadStream(){
     	perror("READ STREAM FAILED");
     string data(buffer);
 	return data;
+}
+
+void Client::setPeerIP(string peer_ip){
+	this->peer_ip = peer_ip;
+}
+
+string Client::getPeerIP() const{
+	return peer_ip;
 }

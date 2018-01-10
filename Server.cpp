@@ -108,16 +108,65 @@ User* Server::isExist(int ID){
 	return NULL;
 }
 
-void Server::startConnection(User* user){
-	string peer_ID = user->readFromClient();
+User* Server::getByIP(string ip){
+	pthread_mutex_lock(&users_mutex);
 
-	cout << "peer ID = " << peer_ID << endl;
-
-	User* peer = isExist(stoi(peer_ID));
-
-	if(peer != NULL){
-		cout << "peer not null\n";
-		user->connectToPeer(peer);
+	for(int i=0; i<current_users; i++){
+		if(ip.compare(users[i]->getIP()) == 0){
+			pthread_mutex_unlock(&users_mutex);
+			return users[i];
+		}
 	}
+
+	pthread_mutex_unlock(&users_mutex);
+	return NULL;
+}
+
+
+
+void Server::startConnection(User* user){
+
+
+	while(true){
+
+		string data = user->readFromClient();
+		char token = data[0];
+
+		string peer_ID, peer_IP;
+		User* peer;
+
+		switch(token){
+			case '1': // id
+				cout << "startConnection Case[1]" << endl;
+				peer_ID = data.substr(1, data.length() - 1);
+				peer = isExist(stoi(peer_ID));
+
+				if(peer != NULL){
+					cout << "peer not null\n";
+					user->connectToPeer(peer);
+				}
+				break;
+
+			case '2': // sender informs sending hello to receiver so server send notif to receiver
+				cout << "startConnection Case[2]" << endl;
+				peer_IP = data.substr(1, data.length() - 1);
+				peer = getByIP(peer_IP);
+				peer->writeToClient("4");
+				break;
+				
+			case '3':
+				cout << "startConnection Case[3]" << endl;
+				peer_IP = data.substr(1, data.length() - 1);
+				peer = getByIP(peer_IP);
+				peer->writeToClient("3");				
+				break;
+				
+			default:
+				cout << "invalid token" << endl;
+				break;
+
+		}
+	}
+
 }
 

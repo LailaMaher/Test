@@ -15,6 +15,9 @@ class Client{
 	int tcp_descriptor, udp_descriptor;
 	struct sockaddr_in udp_addr;
 
+	string peer_ip;
+	int serv_desc;
+
 public:
 
 // ------------- TCP ------------------------
@@ -31,9 +34,12 @@ public:
 	sockaddr* getUDPaddress() const;
 	void setUDPDescriptor(int);
 	int getUDPDescriptor() const;
-	void SendStream(const char*, string);
+	void SendStream(string);
 	string ReadStream();
 
+	void setPeerIP(string);
+	string getPeerIP() const;
+	
 };
 
 

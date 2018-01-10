@@ -3,57 +3,73 @@
 
 #include "Client.h"
 
-bool SENDER = false;
-
-
 void* readFromUDPStream(void* client_v){
+
 	Client* client = (Client*)client_v;
-	string data = client->ReadStream();
-	cout << data << endl;
+	
+	while(true){
+		string data = client->ReadStream();
+		cout << data << endl;	
+	}
+	return NULL;
 }
 
 
 void* HandleNewConnection(void* client_v){
+
 	Client* client = (Client*)client_v;
 
-	string ip = client->ReadFromServer();
-	cout << "Incoming IP :: " << ip << endl;
-	const char *cip = ip.c_str();
+	while(true){
 
-	if(SENDER){
-		// send UDP hello msg
-		cout << "I am sender \nsending hello\n";
-		client->SendStream(cip, "hello");
-		cout << "inform server about sending hello\n";
-		client->WriteToServer("hello sent");
-		cout << "sending UDP packet stream\n";
-		client->SendStream(cip, "this is a packet stream");
+		string data = client->ReadFromServer();
+		char token = data[0];
 
+		string ip;
 
-	} else{
+		switch(token){
+			case '1': // ip and i am sender
+				cout << "HandleNewConnection Case[1]" << endl;
+				ip = data.substr(1, data.length() - 1);
+				client->setPeerIP(ip);
+				client->SendStream("hello");
+				client->WriteToServer("2" + client->getPeerIP());
+				break;
 
-		// wait for UDP hello msg
-		cout << "I am receiver \nwaiting for hello from server\n";
-		string hello_sent = client->ReadFromServer();
-		cout << "sending hello to peer\n";
-		client->SendStream(cip, "hello");
-		cout << "inform server about sending hello\n";
-		client->WriteToServer("hello sent");
+			case '2': // ip and i am receiver
+				cout << "HandleNewConnection Case[2]" << endl;
+				ip = data.substr(1, data.length() - 1);
+				client->setPeerIP(ip);
+				break;
+				
+			case '3': // confirmation to sender
+				cout << "HandleNewConnection Case[3]" << endl;
+				client->SendStream("this is the stream");
+				break;
+			
+			case '4': // confirmation to receiver
+				cout << "HandleNewConnection Case[4]" << endl;
+				client->SendStream("hello");
+				client->WriteToServer("3" + client->getPeerIP());
 
+			default:
+				cout << "invalid token" << endl;
+				break;
+
+		}
 	}
 	return NULL;
 }
 
 void* StartConnection(void* client_v){
+	
 	Client* client = (Client*)client_v;
 
 	int ID;	
 	cout << "Enter the ID to connect to: " << endl;
 	cin >> ID;
+	client->WriteToServer("1" + to_string(ID));
 
-	SENDER = true;
-
-	client->WriteToServer(to_string(ID));
+	return NULL;
 }
 
 int main(int argc, char const *argv[])
