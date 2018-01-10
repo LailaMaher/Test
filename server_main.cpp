@@ -6,6 +6,8 @@
 
 
 void* Work(void* user_v){
+
+	cout << "work \n";
 	User* user = (User*)user_v;
 	Server::instance()->addUser(user);
 	Server::instance()->startConnection(user);

@@ -61,6 +61,7 @@ void User::connectToPeer(User* peer){
 void User::writeToClient(string data){
     char buffer[1024];
     strcpy(buffer, data.c_str());
+    cout << "set ip " << tcp_descriptor << endl;
     if( write(tcp_descriptor, buffer, 1023) < 0) perror("WRITING FAILED");
 }
 
